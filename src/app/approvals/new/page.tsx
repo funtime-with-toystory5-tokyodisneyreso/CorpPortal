@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeft, FileText, UploadCloud, X } from 'lucide-react'
+import { ArrowLeft, FileText, UploadCloud, X, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useState, useRef } from 'react'
 import { insertApproval } from '@/app/actions/approvals'
@@ -102,8 +102,8 @@ export default function NewApprovalPage() {
             <Link href="/approvals" className="px-5 py-2.5 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors">
               キャンセル
             </Link>
-            <button disabled={submitting} className="px-5 py-2.5 bg-indigo-600 disabled:opacity-50 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all">
-              {submitting ? '申請中...' : '稟議を申請する'}
+            <button disabled={submitting} className="px-5 py-2.5 bg-indigo-600 disabled:opacity-50 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all flex items-center justify-center min-w-[150px]">
+              {submitting ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" />申請中...</> : '稟議を申請する'}
             </button>
           </div>
         </form>

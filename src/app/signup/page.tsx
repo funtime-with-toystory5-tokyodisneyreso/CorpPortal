@@ -1,6 +1,7 @@
 import { signup } from '../login/actions'
 import { Building2, Mail, Lock, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
+import { SubmitButton } from '@/components/SubmitButton'
 
 export default async function SignupPage({
   searchParams,
@@ -77,12 +78,12 @@ export default async function SignupPage({
             </div>
 
             <div className="pt-4 space-y-3">
-              <button 
+              <SubmitButton 
                 formAction={signup} 
-                className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl transition-all active:scale-95 border border-slate-200"
+                className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl transition-all active:scale-95 border border-slate-200 flex items-center justify-center disabled:opacity-50"
               >
                 新規登録
-              </button>
+              </SubmitButton>
             </div>
           </form>
           

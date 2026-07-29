@@ -1,6 +1,7 @@
 import { login } from './actions'
 import { Building2, Mail, Lock, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
+import { SubmitButton } from '@/components/SubmitButton'
 
 export default async function LoginPage({
   searchParams,
@@ -77,12 +78,9 @@ export default async function LoginPage({
             </div>
 
             <div className="pt-4 space-y-3">
-              <button 
-                formAction={login} 
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-95"
-              >
+              <SubmitButton formAction={login}>
                 ログイン
-              </button>
+              </SubmitButton>
             </div>
           </form>
           
