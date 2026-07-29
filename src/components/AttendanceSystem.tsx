@@ -98,7 +98,7 @@ export function AttendanceSystem() {
             {currentTime ? currentTime.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' }) : '...'}
           </div>
 
-          <ClockInButtons status={status} onAction={handleAction} />
+          <ClockInButtons status={status} isLoading={loading} onAction={handleAction} />
         </div>
       </div>
 

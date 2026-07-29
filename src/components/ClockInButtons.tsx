@@ -5,11 +5,24 @@ import { WorkStatus } from './AttendanceSystem'
 
 type Props = {
   status: WorkStatus
+  isLoading?: boolean
   onAction: (type: '出勤' | '退勤' | '休憩開始' | '休憩終了') => void
 }
 
-export function ClockInButtons({ status, onAction }: Props) {
-  
+export function ClockInButtons({ status, isLoading, onAction }: Props) {
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-sm mx-auto flex flex-col items-center justify-center space-y-4">
+        <div className="w-48 h-48 sm:w-56 sm:h-56 rounded-full bg-slate-200/50 animate-pulse flex items-center justify-center">
+          <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin"></div>
+        </div>
+        <div className="pt-6 w-full px-4">
+          <div className="w-full h-16 rounded-2xl bg-slate-100 animate-pulse"></div>
+        </div>
+      </div>
+    )
+  }
+
   if (status === 'FINISHED') {
     return (
       <div className="flex flex-col items-center justify-center p-8 bg-slate-50/50 border border-slate-200 rounded-3xl w-full">

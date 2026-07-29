@@ -1,17 +1,54 @@
 import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry } from "@serwist/precaching";
 import { installSerwist } from "@serwist/sw";
+import { StaleWhileRevalidate, CacheFirst, ExpirationPlugin, type RuntimeCaching } from "serwist";
 
 declare const self: WorkerGlobalScope & {
   __SW_MANIFEST: (PrecacheEntry | string)[] | undefined;
 };
+
+// Next.js App Router specific caching for maximum snappiness
+const customCache: RuntimeCaching[] = [
+  {
+    matcher: ({ request, url }) => {
+      // Cache React Server Components (RSC) payloads and document navigations
+      return (
+        request.mode === 'navigate' ||
+        url.searchParams.has('_rsc') ||
+        request.headers.get('RSC') === '1'
+      );
+    },
+    handler: new StaleWhileRevalidate({
+      cacheName: 'app-pages-cache',
+      plugins: [
+        new ExpirationPlugin({
+          maxEntries: 100,
+          maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
+        }),
+      ],
+    }),
+  },
+  {
+    matcher: ({ request }) => request.destination === 'image',
+    handler: new CacheFirst({
+      cacheName: 'app-images-cache',
+      plugins: [
+        new ExpirationPlugin({
+          maxEntries: 200,
+          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+        }),
+      ],
+    }),
+  },
+  ...defaultCache,
+];
 
 installSerwist({
   precacheEntries: self.__SW_MANIFEST,
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
-  runtimeCaching: defaultCache,
+  runtimeCaching: customCache,
 });
 
 (self as any).addEventListener('push', function (event: any) {
