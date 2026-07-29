@@ -20,8 +20,6 @@ installSerwist({
     const title = data.title || '新しい通知';
     const options: NotificationOptions = {
       body: data.body || '新着メッセージがあります',
-      icon: '/icons/icon-192x192.png',
-      badge: '/icons/icon-72x72.png',
       data: {
         url: data.url || '/'
       }
