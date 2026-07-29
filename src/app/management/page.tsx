@@ -38,7 +38,7 @@ export default async function ManagementPage({ searchParams }: { searchParams: P
   }
 
   return (
-    <div className="space-y-6 pb-20 md:pb-6 relative h-full flex flex-col">
+    <div className="space-y-6 pb-20 md:pb-6 relative min-h-full">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight flex items-center">
@@ -84,7 +84,7 @@ export default async function ManagementPage({ searchParams }: { searchParams: P
         </Link>
       </div>
 
-      <div className="flex-1 bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+      <div className="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
         {currentTab === 'approvals' && (
           <>
             {/* Mobile view: Cards */}
