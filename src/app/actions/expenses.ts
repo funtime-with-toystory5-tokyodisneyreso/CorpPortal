@@ -107,6 +107,21 @@ export async function insertExpense(formData: FormData) {
     throw error
   }
 
+  // Notify admins
+  try {
+    const { getProfile } = await import('./profile')
+    const profile = await getProfile()
+    const { notifyAdmins } = await import('./push')
+    
+    await notifyAdmins({
+      title: '新しい経費申請',
+      body: `${profile?.full_name || 'ユーザー'}さんから経費申請（${amount.toLocaleString()}円）がありました`,
+      url: '/management?tab=expenses'
+    })
+  } catch (e) {
+    console.error('Error sending push notification:', e)
+  }
+
   revalidatePath('/expenses')
 }
 

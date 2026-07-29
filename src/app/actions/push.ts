@@ -125,3 +125,25 @@ export async function sendTestNotification() {
     url: '/settings'
   })
 }
+
+// Function to send a notification to all admin users
+export async function notifyAdmins(payload: { title: string, body: string, url?: string }) {
+  const supabase = await createClient()
+
+  // Find all users with role '管理者'
+  const { data: admins, error: adminError } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('role', '管理者')
+
+  if (adminError || !admins || admins.length === 0) {
+    console.error('Error fetching admins or no admins found:', adminError)
+    return { success: false, error: 'No admins found' }
+  }
+
+  // Send notification to each admin
+  const notifications = admins.map(admin => sendNotificationToUser(admin.id, payload))
+  
+  await Promise.allSettled(notifications)
+  return { success: true }
+}

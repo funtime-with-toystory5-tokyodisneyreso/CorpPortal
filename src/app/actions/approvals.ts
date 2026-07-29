@@ -77,6 +77,21 @@ export async function insertApproval(formData: FormData) {
     throw error
   }
 
+  // Notify admins
+  try {
+    const { getProfile } = await import('./profile')
+    const profile = await getProfile()
+    const { notifyAdmins } = await import('./push')
+    
+    await notifyAdmins({
+      title: '新しいワークフロー申請',
+      body: `${profile?.full_name || 'ユーザー'}さんから申請（${title}）がありました`,
+      url: '/management?tab=approvals'
+    })
+  } catch (e) {
+    console.error('Error sending push notification:', e)
+  }
+
   revalidatePath('/approvals')
 }
 
