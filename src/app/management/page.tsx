@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getPendingExpenses, getExpenseHistory } from '@/app/actions/expenses'
 import { getPendingApprovals, getApprovalHistory } from '@/app/actions/approvals'
 import { getProfile } from '@/app/actions/profile'
+import { ExportPanel } from '@/components/ExportPanel'
 import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -195,7 +196,10 @@ export default async function ManagementPage({ searchParams }: { searchParams: P
         )}
 
         {currentTab === 'expenses' && (
-          <>
+          <div className="flex flex-col h-full">
+            <div className="p-4 border-b border-slate-100 flex justify-end bg-slate-50/50">
+              <ExportPanel />
+            </div>
             {/* Mobile view: Cards */}
             <div className="md:hidden flex flex-col p-4 space-y-4">
               {expenses.length === 0 ? (
@@ -297,7 +301,7 @@ export default async function ManagementPage({ searchParams }: { searchParams: P
                 </tbody>
               </table>
             </div>
-          </>
+          </div>
         )}
       </div>
 
