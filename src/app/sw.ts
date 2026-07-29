@@ -55,8 +55,11 @@ installSerwist({
   if (event.data) {
     const data = event.data.json();
     const title = data.title || '新しい通知';
-    const options: NotificationOptions = {
+    const options: any = {
       body: data.body || '新着メッセージがあります',
+      icon: '/icon-192x192.jpg',
+      badge: '/icon-192x192.jpg',
+      vibrate: [200, 100, 200],
       data: {
         url: data.url || '/'
       }
