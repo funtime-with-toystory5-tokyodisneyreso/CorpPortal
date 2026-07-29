@@ -5,13 +5,12 @@ import { getPendingApprovals, getApprovalHistory } from '@/app/actions/approvals
 import { getProfile } from '@/app/actions/profile'
 import { ExportPanel } from '@/components/ExportPanel'
 import { redirect } from 'next/navigation'
+import { Suspense } from 'react'
+import LoadingSkeleton from './loading'
 
 export const dynamic = 'force-dynamic'
 
-export default async function ManagementPage({ searchParams }: { searchParams: Promise<{ tab?: string, filter?: string }> }) {
-  const { tab, filter } = await searchParams;
-  const currentTab = tab || 'approvals';
-  const currentFilter = filter || 'pending';
+async function ManagementContent({ currentTab, currentFilter }: { currentTab: string, currentFilter: string }) {
   const profile = await getProfile();
 
   if (!profile || profile.role === '一般') {
@@ -38,7 +37,7 @@ export default async function ManagementPage({ searchParams }: { searchParams: P
   }
 
   return (
-    <div className="space-y-6 pb-20 md:pb-6 relative min-h-full">
+    <>
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight flex items-center">
@@ -304,7 +303,20 @@ export default async function ManagementPage({ searchParams }: { searchParams: P
           </div>
         )}
       </div>
+    </>
+  )
+}
 
+export default async function ManagementPage({ searchParams }: { searchParams: Promise<{ tab?: string, filter?: string }> }) {
+  const { tab, filter } = await searchParams;
+  const currentTab = tab || 'approvals';
+  const currentFilter = filter || 'pending';
+
+  return (
+    <div className="space-y-6 pb-20 md:pb-6 relative min-h-full">
+      <Suspense key={`${currentTab}-${currentFilter}`} fallback={<LoadingSkeleton />}>
+        <ManagementContent currentTab={currentTab} currentFilter={currentFilter} />
+      </Suspense>
       {/* Background Blob */}
       <div className="fixed top-40 left-0 w-96 h-96 bg-indigo-300/10 rounded-full mix-blend-multiply filter blur-3xl opacity-60 -translate-x-1/2 pointer-events-none -z-10"></div>
     </div>

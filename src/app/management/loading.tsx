@@ -2,7 +2,7 @@ import { CheckSquare, FileText, User, Building, Loader2 } from 'lucide-react'
 
 export default function Loading() {
   return (
-    <div className="space-y-6 pb-20 md:pb-6 relative min-h-full animate-in fade-in duration-300">
+    <div className="animate-in fade-in duration-300 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <div className="flex items-center">
