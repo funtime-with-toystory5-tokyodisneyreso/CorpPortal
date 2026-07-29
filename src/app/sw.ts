@@ -57,8 +57,8 @@ installSerwist({
     const title = data.title || '新しい通知';
     const options: any = {
       body: data.body || '新着メッセージがあります',
-      icon: '/icon-192x192.jpg',
-      badge: '/icon-192x192.jpg',
+      icon: '/icon-192x192.png',
+      badge: '/icon-192x192.png',
       vibrate: [200, 100, 200],
       data: {
         url: data.url || '/'
