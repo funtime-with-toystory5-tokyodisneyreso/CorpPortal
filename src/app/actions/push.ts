@@ -132,11 +132,11 @@ export async function notifyAdmins(payload: { title: string, body: string, url?:
   const { createAdminClient } = await import('@/utils/supabase/admin')
   const supabaseAdmin = createAdminClient()
 
-  // Find all users with role '管理者'
+  // Find all users with role '管理者' or '役員'
   const { data: admins, error: adminError } = await supabaseAdmin
     .from('profiles')
     .select('id')
-    .eq('role', '管理者')
+    .in('role', ['管理者', '役員'])
 
   if (adminError || !admins || admins.length === 0) {
     console.error('Error fetching admins or no admins found:', adminError)
