@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getApproval, updateApprovalStatus } from '@/app/actions/approvals'
 import { getProfile } from '@/app/actions/profile'
 import { notFound } from 'next/navigation'
+import { ImageModal } from '@/components/ImageModal'
 
 export default async function ApprovalDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -83,6 +84,20 @@ export default async function ApprovalDetailPage({ params }: { params: Promise<{
           <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
             <p className="text-slate-700 whitespace-pre-wrap">{approval.description || '記載なし'}</p>
           </div>
+        </div>
+
+        <div className="pt-6 border-t border-slate-100">
+          <div className="flex items-center text-sm font-bold text-slate-500 mb-3">
+            <FileText className="w-4 h-4 mr-2 text-indigo-500" />
+            添付資料
+          </div>
+          {approval.attachment_url ? (
+            <ImageModal src={approval.attachment_url} alt="添付資料" />
+          ) : (
+            <div className="p-6 bg-slate-50 border border-slate-200 border-dashed rounded-2xl text-center">
+              <p className="text-sm font-bold text-slate-500">添付資料はありません</p>
+            </div>
+          )}
         </div>
       </div>
 

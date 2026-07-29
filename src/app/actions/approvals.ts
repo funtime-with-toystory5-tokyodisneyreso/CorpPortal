@@ -35,6 +35,25 @@ export async function insertApproval(formData: FormData) {
   const priority = formData.get('priority') as string
   const approver_route = formData.get('approver_route') as string
   const description = formData.get('description') as string
+  const attachment = formData.get('attachment') as File | null
+
+  let attachment_url = null
+
+  if (attachment && attachment.size > 0) {
+    const fileExt = attachment.name.split('.').pop()
+    const fileName = `${user.id}-${Math.random().toString(36).substring(2)}.${fileExt}`
+    
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('receipts')
+      .upload(fileName, attachment)
+
+    if (uploadError) {
+      console.error('Error uploading attachment:', uploadError)
+    } else if (uploadData) {
+      const { data } = supabase.storage.from('receipts').getPublicUrl(fileName)
+      attachment_url = data.publicUrl
+    }
+  }
 
   if (!title || !approver_route) {
     throw new Error('Invalid form data')
@@ -49,6 +68,7 @@ export async function insertApproval(formData: FormData) {
       priority,
       approver_route,
       description,
+      attachment_url,
       status: '承認待ち'
     }])
 

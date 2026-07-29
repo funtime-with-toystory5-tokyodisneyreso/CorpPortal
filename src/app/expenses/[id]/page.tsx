@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getExpense, updateExpenseStatus } from '@/app/actions/expenses'
 import { getProfile } from '@/app/actions/profile'
 import { notFound } from 'next/navigation'
+import { ImageModal } from '@/components/ImageModal'
 
 export const dynamic = 'force-dynamic'
 
@@ -75,13 +76,7 @@ export default async function ExpenseDetailPage({ params }: { params: Promise<{ 
             添付された領収書
           </div>
           {expense.receipt_image_url ? (
-            <div className="rounded-2xl border border-slate-200 overflow-hidden bg-slate-50 relative group">
-              <img 
-                src={expense.receipt_image_url} 
-                alt="領収書" 
-                className="w-full h-auto object-contain max-h-96"
-              />
-            </div>
+            <ImageModal src={expense.receipt_image_url} alt="領収書" />
           ) : (
             <div className="p-6 bg-slate-50 border border-slate-200 border-dashed rounded-2xl text-center">
               <p className="text-sm font-bold text-slate-500">領収書の添付はありません</p>

@@ -11,6 +11,7 @@ export default function NewApprovalPage() {
   const router = useRouter()
   const [priority, setPriority] = useState('通常')
   const [submitting, setSubmitting] = useState(false)
+  const [file, setFile] = useState<File | null>(null)
   const formRef = useRef<HTMLFormElement>(null)
 
   return (
@@ -29,6 +30,9 @@ export default function NewApprovalPage() {
         <form ref={formRef} action={async (formData) => {
           setSubmitting(true)
           try {
+            if (file) {
+              formData.append('attachment', file)
+            }
             await insertApproval(formData)
             router.push('/approvals')
           } catch (e) {
@@ -91,12 +95,53 @@ export default function NewApprovalPage() {
 
           <div>
             <label className="block text-sm font-bold text-slate-700 mb-1.5">添付資料 (見積書など)</label>
-            <div className="border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center bg-slate-50 hover:bg-slate-100/50 hover:border-indigo-300 transition-colors cursor-pointer group">
-              <div className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                <UploadCloud className="w-5 h-5 text-indigo-500" />
+            {file ? (
+              <div className="relative border-2 border-indigo-100 bg-indigo-50/50 rounded-2xl p-4 flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-white rounded-lg shadow-sm border border-slate-100 flex items-center justify-center relative">
+                    <FileText className="w-6 h-6 text-indigo-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-slate-800 line-clamp-1">{file.name}</p>
+                    <p className="text-xs font-medium text-slate-500">
+                      {(file.size / 1024).toFixed(1)} KB
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  type="button"
+                  onClick={() => setFile(null)}
+                  className="p-2 text-rose-500 hover:bg-rose-50 rounded-full transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-              <p className="text-sm font-bold text-slate-700">資料を追加</p>
-            </div>
+            ) : (
+              <div 
+                className="border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center bg-slate-50 hover:bg-slate-100/50 hover:border-indigo-300 transition-colors cursor-pointer relative group"
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault()
+                  if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    setFile(e.dataTransfer.files[0])
+                  }
+                }}
+              >
+                <input 
+                  type="file" 
+                  accept="image/*,.pdf"
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) setFile(e.target.files[0])
+                  }}
+                />
+                <div className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                  <UploadCloud className="w-5 h-5 text-indigo-500" />
+                </div>
+                <p className="text-sm font-bold text-slate-700 mb-1">タップまたはドラッグ＆ドロップで添付</p>
+                <p className="text-xs text-slate-500 font-medium">JPEG, PNG, PDF (最大 5MB)</p>
+              </div>
+            )}
           </div>
 
           <div className="pt-6 border-t border-slate-100 flex justify-end space-x-3">
