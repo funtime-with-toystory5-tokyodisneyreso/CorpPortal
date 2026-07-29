@@ -128,10 +128,12 @@ export async function sendTestNotification() {
 
 // Function to send a notification to all admin users
 export async function notifyAdmins(payload: { title: string, body: string, url?: string }) {
-  const supabase = await createClient()
+  // Use admin client to bypass RLS, otherwise regular users can't read admin's push subscriptions
+  const { createAdminClient } = await import('@/utils/supabase/admin')
+  const supabaseAdmin = createAdminClient()
 
   // Find all users with role '管理者'
-  const { data: admins, error: adminError } = await supabase
+  const { data: admins, error: adminError } = await supabaseAdmin
     .from('profiles')
     .select('id')
     .eq('role', '管理者')
@@ -142,7 +144,41 @@ export async function notifyAdmins(payload: { title: string, body: string, url?:
   }
 
   // Send notification to each admin
-  const notifications = admins.map(admin => sendNotificationToUser(admin.id, payload))
+  const notifications = admins.map(async (admin) => {
+    // Get subscriptions for this admin using admin client
+    const { data: subscriptions, error: subError } = await supabaseAdmin
+      .from('push_subscriptions')
+      .select('*')
+      .eq('user_id', admin.id)
+
+    if (subError || !subscriptions || subscriptions.length === 0) {
+      return
+    }
+
+    const pushPromises = subscriptions.map(async (sub) => {
+      const pushSubscription = {
+        endpoint: sub.endpoint,
+        keys: {
+          p256dh: sub.p256dh,
+          auth: sub.auth
+        }
+      }
+
+      try {
+        await webpush.sendNotification(pushSubscription, JSON.stringify(payload))
+      } catch (e: any) {
+        console.error('Error sending push notification to admin:', e)
+        if (e.statusCode === 410 || e.statusCode === 404) {
+          await supabaseAdmin
+            .from('push_subscriptions')
+            .delete()
+            .eq('id', sub.id)
+        }
+      }
+    })
+
+    await Promise.allSettled(pushPromises)
+  })
   
   await Promise.allSettled(notifications)
   return { success: true }
